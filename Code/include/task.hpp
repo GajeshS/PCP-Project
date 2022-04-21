@@ -17,6 +17,8 @@ namespace task
          * The API to be called by the thread executing the task.
          */
         virtual void run() = 0;
+
+        virtual ~Task() = default;
     };
 }
 

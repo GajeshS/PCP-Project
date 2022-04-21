@@ -38,6 +38,8 @@ namespace WSD
          * Note: null return does not imply that there is no task in the queue.
          */
         virtual std::shared_ptr<task::Task> popTop() = 0;
+
+        virtual ~WSDequeue() = default;
     };
 }
 #endif // INCLUDE_WSDEQUEUE
