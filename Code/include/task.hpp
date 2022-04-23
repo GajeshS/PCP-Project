@@ -3,6 +3,13 @@
 
 namespace task
 {
+    enum class STATUS
+    {
+        YET_TO_START,
+        STARTED,
+        COMPLETED
+    };
+
     /**
      * @brief
      * An abstract class to be implemented by the user.
@@ -11,6 +18,8 @@ namespace task
      */
     class Task
     {
+        STATUS m_current_status;
+
     public:
         /**
          * @brief
@@ -18,7 +27,11 @@ namespace task
          */
         virtual void run() = 0;
 
+        STATUS getStatus() const;
+
         virtual ~Task() = default;
+
+        Task();
     };
 }
 

@@ -17,4 +17,4 @@ namespace utils
 
 } // namespace utils
 
-#endif
+#endif // INCLUDE_UTILITIES_HPP

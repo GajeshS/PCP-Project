@@ -29,14 +29,7 @@ namespace matmul
          * @param i
          * @param j
          */
-        MatMulTask(const Matrix &matrix1, const Matrix &matrix2, const int &i, const int &j)
-            : m_matrix1(matrix1),
-              m_matrix2(matrix2),
-              m_i(i),
-              m_j(j),
-              m_result(0)
-        {
-        }
+        MatMulTask(const Matrix &matrix1, const Matrix &matrix2, const int &i, const int &j);
 
         /**
          * @copydoc task::Task::run()
@@ -49,6 +42,10 @@ namespace matmul
          * @return int
          */
         int getResult() const;
+
+        int getI() const;
+
+        int getJ() const;
     };
 
 } // namespace matmul
