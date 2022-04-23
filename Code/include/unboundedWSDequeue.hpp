@@ -23,6 +23,14 @@ namespace WSD
         std::shared_ptr<task::Task> popBottom() final;
 
         /**
+         * @brief API called by thieves to make sure they can steal from this WSD
+         *
+         * @return true
+         * @return false
+         */
+        bool isEmpty() final;
+
+        /**
          * @copydoc WSDequeue::popTop
          */
         std::shared_ptr<task::Task> popTop() final;
