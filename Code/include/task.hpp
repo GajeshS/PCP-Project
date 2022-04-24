@@ -3,12 +3,6 @@
 
 namespace task
 {
-    enum class STATUS
-    {
-        YET_TO_START,
-        STARTED,
-        COMPLETED
-    };
 
     /**
      * @brief
@@ -18,7 +12,6 @@ namespace task
      */
     class Task
     {
-        STATUS m_current_status;
 
     public:
         /**
@@ -27,11 +20,12 @@ namespace task
          */
         virtual void run() = 0;
 
-        STATUS getStatus() const;
-
+        /**
+         * @brief
+         * Destroy the Task object
+         *
+         */
         virtual ~Task() = default;
-
-        Task();
     };
 }
 

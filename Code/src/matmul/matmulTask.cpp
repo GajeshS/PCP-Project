@@ -39,4 +39,14 @@ namespace matmul
     {
         return m_result;
     }
+
+    int MatMulTask::getI() const
+    {
+        return m_i;
+    }
+
+    int MatMulTask::getJ() const
+    {
+        return m_j;
+    }
 } // namespace matmul
