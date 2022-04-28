@@ -40,7 +40,8 @@ namespace WSD
         virtual std::shared_ptr<task::Task> popTop() = 0;
 
         /**
-         * @brief API called by thieves to make sure they can steal from this WSD
+         * @brief
+         * API called by thieves to make sure they can steal from this WSD
          *
          * @return true
          * @return false

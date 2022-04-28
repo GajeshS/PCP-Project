@@ -33,6 +33,17 @@ namespace atomic
         return false;
     }
 
+    bool AtomicStampedReference::compareAndSet(int old_value, int new_value)
+    {
+        std::lock_guard<std::mutex> locker(m_mutex);
+        if (m_value == old_value)
+        {
+            m_value = new_value;
+            return true;
+        }
+        return false;
+    }
+
     void AtomicStampedReference::set(long stamp, int value)
     {
         std::lock_guard<std::mutex> locker(m_mutex);

@@ -1,7 +1,7 @@
 #include "matmul/matmul.hpp"
 
-#include "boundedWSDequeue.hpp"
-#include "unboundedWSDequeue.hpp"
+#include "impl/boundedWSDequeue.hpp"
+#include "impl/unboundedWSDequeue.hpp"
 
 #include <future>
 #include <set>
@@ -27,8 +27,8 @@ namespace matmul
         }
         else
         {
-            // for (int i = 0; i < m_num_threads; ++i)
-            // m_wsdequeue.push_back(std::make_shared<WSD::UnboundedWSDequeue>());
+            for (int i = 0; i < m_num_threads; ++i)
+                m_wsdequeue.push_back(std::make_shared<WSD::UnboundedWSDequeue>(6));
         }
     }
 

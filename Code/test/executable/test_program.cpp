@@ -7,6 +7,17 @@
 
 namespace
 {
+
+    /**
+     * @brief
+     * This is the basic non-concurrent approach of matrix multiplication
+     * No use of multithreading
+     *
+     * @param matrix_1
+     * @param matrix_2
+     *
+     * @return The resultant matrix after multiplication.
+     */
     matmul::Matrix multiply(matmul::Matrix matrix_1, matmul::Matrix matrix_2)
     {
 
@@ -67,7 +78,7 @@ int main()
     }
 
     {
-        matmul::MatrixMultiplier matrix_multiplier(4, matrix_1, matrix_2, true);
+        matmul::MatrixMultiplier matrix_multiplier(4, matrix_1, matrix_2, false);
         auto start_time = std::chrono::system_clock::now();
 
         auto result = matrix_multiplier.getResult();

@@ -55,6 +55,16 @@ namespace atomic
         /**
          * @brief
          *
+         * @param old_value
+         * @param new_value
+         * @return true
+         * @return false
+         */
+        bool compareAndSet(int old_value, int new_value);
+
+        /**
+         * @brief
+         *
          * @param stamp
          * @param value
          */
