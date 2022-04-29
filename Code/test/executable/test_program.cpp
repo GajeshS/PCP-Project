@@ -3,7 +3,9 @@
 #include "matmul/matmul.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <chrono>
+#include <thread>
 
 namespace
 {
@@ -44,6 +46,7 @@ namespace
 
 int main()
 {
+    std::ofstream outfile("../output.txt");
     int m, k, n; // m1 is of dims (m,k) and m2 is of dim (k,n) result is (m,n)
 
     int num_threads;
@@ -51,6 +54,12 @@ int main()
 
     std::cin >> m >> n;
     std::cin >> k;
+
+    std::vector<float> distribution(num_threads);
+    for (int j = 0; j < num_threads; j++)
+    {
+        std::cin >> distribution[j];
+    }
 
     std::vector<std::vector<int>> matrix_1(m);
     std::vector<std::vector<int>> matrix_2(k);
@@ -78,14 +87,14 @@ int main()
     }
 
     {
-        matmul::MatrixMultiplier matrix_multiplier(num_threads, matrix_1, matrix_2, false);
+        matmul::MatrixMultiplier matrix_multiplier(num_threads, matrix_1, matrix_2, distribution, true);
         auto start_time = std::chrono::system_clock::now();
 
         auto result = matrix_multiplier.getResult();
 
         auto end_time = std::chrono::system_clock::now();
         auto time_taken = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-        std::cout << "Time taken:" << time_taken << std::endl;
+        outfile << "Time taken:" << time_taken << std::endl;
         std::cout << "Resultant Matrix:" << std::endl;
         for (int i = 0; i < m; i++)
         {

@@ -9,7 +9,7 @@
 
 namespace
 {
-    const int BOUNDED_DEQUEUE_CAPACITY = 30;
+    const int BOUNDED_DEQUEUE_CAPACITY = 45;
 }
 
 namespace matmul
@@ -18,8 +18,44 @@ namespace matmul
     MatrixMultiplier::MatrixMultiplier(int num_threads, Matrix m1, Matrix m2, bool bounded_wsd)
         : m_num_threads(num_threads),
           m_matrix1(m1),
-          m_matrix2(m2)
+          m_matrix2(m2),
+          m_distribution({}),
+          m_uneven_distribution(false)
     {
+        if (bounded_wsd)
+        {
+            for (int i = 0; i < m_num_threads; ++i)
+                m_wsdequeue.push_back(std::make_shared<WSD::BoundedWSDequeue>(BOUNDED_DEQUEUE_CAPACITY));
+        }
+        else
+        {
+            for (int i = 0; i < m_num_threads; ++i)
+                m_wsdequeue.push_back(std::make_shared<WSD::UnboundedWSDequeue>(4));
+        }
+    }
+
+    MatrixMultiplier::MatrixMultiplier(int num_threads, Matrix m1, Matrix m2, std::vector<float> distribution,
+                                       bool bounded_wsd)
+        : MatrixMultiplier(num_threads, m1, m2, bounded_wsd)
+    {
+        m_distribution = std::vector<int>(num_threads);
+        int max_computations = m1.size() * m2[0].size();
+        // preparing the distribution vector
+        {
+            for (int i = 1; i < num_threads; ++i)
+            {
+                distribution[i] = distribution[i - 1] + distribution[i];
+            }
+            for (int i = 0; i < num_threads; ++i)
+            {
+                distribution[i] /= distribution[m_num_threads - 1];
+                m_distribution[i] = distribution[i] * max_computations;
+            }
+            // to account for any floating point errors
+            m_distribution[m_num_threads - 1] = max_computations;
+        }
+
+        m_uneven_distribution = true;
         if (bounded_wsd)
         {
             for (int i = 0; i < m_num_threads; ++i)
@@ -35,14 +71,33 @@ namespace matmul
     Matrix MatrixMultiplier::getResult()
     {
         // startup for the task
-        for (int i = 0; i < m_matrix1.size(); ++i)
+        if (!m_uneven_distribution)
         {
-            for (int j = 0; j < m_matrix2[0].size(); ++j)
+            for (int i = 0; i < m_matrix1.size(); ++i)
             {
-                int x = i * m_matrix1.size() + j;
-                auto task = std::make_shared<MatMulTask>(m_matrix1, m_matrix2, i, j);
-                m_tasks.push_back(task);
-                m_wsdequeue[x % m_num_threads]->pushBottom(task);
+                for (int j = 0; j < m_matrix2[0].size(); ++j)
+                {
+                    int x = i * m_matrix1.size() + j;
+                    auto task = std::make_shared<MatMulTask>(m_matrix1, m_matrix2, i, j);
+                    m_tasks.push_back(task);
+                    m_wsdequeue[x % m_num_threads]->pushBottom(task);
+                }
+            }
+        }
+        else
+        {
+            int k = 0;
+            for (int i = 0; i < m_matrix1.size(); ++i)
+            {
+                for (int j = 0; j < m_matrix2[0].size(); ++j)
+                {
+                    int x = i * m_matrix1.size() + j;
+                    auto task = std::make_shared<MatMulTask>(m_matrix1, m_matrix2, i, j);
+                    m_tasks.push_back(task);
+                    while (m_distribution[k] <= x)
+                        k++;
+                    m_wsdequeue[k]->pushBottom(task);
+                }
             }
         }
 
