@@ -78,7 +78,7 @@ int main()
     }
 
     {
-        matmul::MatrixMultiplier matrix_multiplier(4, matrix_1, matrix_2, false);
+        matmul::MatrixMultiplier matrix_multiplier(num_threads, matrix_1, matrix_2, false);
         auto start_time = std::chrono::system_clock::now();
 
         auto result = matrix_multiplier.getResult();

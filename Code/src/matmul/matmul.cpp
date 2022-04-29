@@ -28,7 +28,7 @@ namespace matmul
         else
         {
             for (int i = 0; i < m_num_threads; ++i)
-                m_wsdequeue.push_back(std::make_shared<WSD::UnboundedWSDequeue>(6));
+                m_wsdequeue.push_back(std::make_shared<WSD::UnboundedWSDequeue>(3));
         }
     }
 

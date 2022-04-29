@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <mutex>
 
 namespace WSD
 {
@@ -17,6 +18,9 @@ namespace WSD
     {
         int m_log_capacity;
         std::vector<std::shared_ptr<task::Task>> m_tasks;
+        // std::atomic doesn't work with large objects. Hence,
+        // we are forced to use locks to mimic the behaviour.
+        std::recursive_mutex m_atomicizer;
 
     public:
         /**
@@ -24,7 +28,7 @@ namespace WSD
          *
          * @param capacity
          */
-        explicit CircularArray(int capacity = 4);
+        explicit CircularArray(const int &capacity = 4);
 
         /**
          * @brief
@@ -39,7 +43,7 @@ namespace WSD
          * @param index
          * @return std::shared_ptr<task::Task>
          */
-        std::shared_ptr<task::Task> getTask(int index);
+        std::shared_ptr<task::Task> getTask(const int &index);
 
         /**
          * @brief Set the Task object
@@ -47,7 +51,7 @@ namespace WSD
          * @param index
          * @param task
          */
-        void setTask(int index, std::shared_ptr<task::Task> task);
+        void setTask(const int &index, std::shared_ptr<task::Task> task);
 
         /**
          * @brief
@@ -56,7 +60,7 @@ namespace WSD
          * @param top
          * @return CircularArray
          */
-        std::shared_ptr<CircularArray> resize(int bottom, int top);
+        void resize(const int &bottom, const int &top);
     };
 
 }

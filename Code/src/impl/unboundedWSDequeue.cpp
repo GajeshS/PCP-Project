@@ -2,20 +2,19 @@
 
 namespace WSD
 {
-    UnboundedWSDequeue::UnboundedWSDequeue(int initial_capacity) : m_bottom(0)
-    {
-        m_array = std::make_shared<CircularArray>(initial_capacity);
-    }
+    UnboundedWSDequeue::UnboundedWSDequeue(int initial_capacity)
+        : m_bottom(0),
+          m_array(initial_capacity) {}
 
     void UnboundedWSDequeue::pushBottom(std::shared_ptr<task::Task> task)
     {
         int bottom = m_bottom;
         int top = m_top.getValue();
-        if (m_array->capacity() <= (bottom - top + 1))
+        if (m_array.capacity() <= (bottom - top + 1))
         {
-            m_array = m_array->resize(bottom, top);
+            m_array.resize(bottom, top);
         }
-        m_array->setTask(bottom, task);
+        m_array.setTask(bottom, task);
         m_bottom.store(bottom + 1);
     }
 
@@ -29,7 +28,7 @@ namespace WSD
             m_bottom = old_top;
             return nullptr;
         }
-        auto task = m_array->getTask(m_bottom);
+        auto task = m_array.getTask(m_bottom);
         if (size > 0)
         {
             return task;
@@ -55,7 +54,7 @@ namespace WSD
         {
             return nullptr;
         }
-        auto task = m_array->getTask(top);
+        auto task = m_array.getTask(top);
         if (m_top.compareAndSet(top, top + 1))
         {
             return task;

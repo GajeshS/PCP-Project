@@ -12,18 +12,11 @@ namespace WSD
 
     /**
      * @brief
-     * Internal class used to maintain a circular array.
-     * Defined in the implementation file
-     */
-    class CircularArray;
-
-    /**
-     * @brief
      * The abstract implementation of the Work Stealing DEQueue in a bounded fashion
      */
     class UnboundedWSDequeue : public WSDequeue
     {
-        std::shared_ptr<CircularArray> m_array;
+        CircularArray m_array;
         std::atomic<int> m_bottom;
         atomic::AtomicStampedReference m_top;
 
